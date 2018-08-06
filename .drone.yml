@@ -6,3 +6,10 @@ pipeline:
       - apk add build-base ffmpeg
       - bundle install
       - bundle exec rspec
+  ecr:
+    image: plugins/ecr
+    access_key: AKIAJKJ7YE7UPLBRQESA 
+    secret_key: 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
+    repo: 074567182610.dkr.ecr.us-east-1.amazonaws.com/streamio-ffmpeg
+    registry: 074567182610.dkr.ecr.us-east-1.amazonaws.com
+    region: us-east-1
