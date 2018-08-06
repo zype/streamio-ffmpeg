@@ -29,7 +29,7 @@ describe FFMPEG do
     end
 
     it 'should default to finding from path' do
-      allow(FFMPEG).to receive(:which) { '/usr/local/bin/ffmpeg' }
+      allow(FFMPEG).to receive(:which) { '/usr/bin/ffmpeg' }
       expect(FFMPEG.ffmpeg_binary).to eq FFMPEG.which('ffprobe')
     end
 
