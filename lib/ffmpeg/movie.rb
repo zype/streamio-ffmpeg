@@ -158,11 +158,11 @@ module FFMPEG
     end
 
     def width
-      rotation.nil? || rotation == 180 ? @width : @height;
+      rotated? ? @height : @width
     end
 
     def height
-      rotation.nil? || rotation == 180 ? @height : @width;
+      rotated? ? @width : @height
     end
 
     def resolution
@@ -210,6 +210,11 @@ module FFMPEG
     end
 
     protected
+
+    def rotated?
+      !(rotation.nil? || [180,0].include?(rotation))
+    end
+
     def aspect_from_dar
       calculate_aspect(dar)
     end
@@ -222,7 +227,7 @@ module FFMPEG
       return nil unless ratio
       w, h = ratio.split(':')
       return nil if w == '0' || h == '0'
-      @rotation.nil? || (@rotation == 180) ? (w.to_f / h.to_f) : (h.to_f / w.to_f)
+      rotated? ? (h.to_f / w.to_f) : (w.to_f / h.to_f)
     end
 
     def aspect_from_dimensions
