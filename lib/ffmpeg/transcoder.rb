@@ -10,7 +10,7 @@ module FFMPEG
       attr_accessor :timeout
     end
 
-    def initialize(input, output_file, options = EncodingOptions.new, transcoder_options = {})
+    def initialize(input, output_file, options = EncodingOptions.new, transcoder_options = {}, additional_inputs = [])
       if input.is_a?(FFMPEG::Movie)
         @movie = input
         @input = input.path
@@ -24,6 +24,9 @@ module FFMPEG
       apply_transcoder_options
 
       @input = @transcoder_options[:input] unless @transcoder_options[:input].nil?
+      
+      # additional_inputs = ["-i", "/file/path", "-i", "/file/path", ...]
+      @additional_inputs = additional_inputs
 
       input_options = @transcoder_options[:input_options] || []
       iopts = []
@@ -34,7 +37,7 @@ module FFMPEG
         input_options.each { |k, v| iopts += ['-' + k.to_s, v] }
       end
 
-      @command = [FFMPEG.ffmpeg_binary, '-y', *iopts, '-i', @input, *@raw_options.to_a, @output_file]
+      @command = [FFMPEG.ffmpeg_binary, '-y', *iopts, '-i', @input, *@additional_inputs, *@raw_options.to_a, @output_file]
     end
 
     def run(&block)

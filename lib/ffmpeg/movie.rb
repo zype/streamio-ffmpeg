@@ -201,8 +201,9 @@ module FFMPEG
                                end
     end
 
-    def transcode(output_file, options = EncodingOptions.new, transcoder_options = {}, &block)
-      Transcoder.new(self, output_file, options, transcoder_options).run &block
+    # additional_inputs = ["-i", "/file/path", "-i", "/file/path", ...]
+    def transcode(output_file, options = EncodingOptions.new, transcoder_options = {}, additional_inputs = [], &block)
+      Transcoder.new(self, output_file, options, transcoder_options, additional_inputs).run &block
     end
 
     def screenshot(output_file, options = EncodingOptions.new, transcoder_options = {}, &block)
