@@ -28,9 +28,9 @@ module FFMPEG
       end
 
       @path = path
-
+      ffprobe_options = options[:ffprobe_options] || [] # ffprobe_options needs to be sent as an array of string
       # ffmpeg will output to stderr
-      command = [FFMPEG.ffprobe_binary, '-i', path, *%w(-print_format json -show_format -show_streams -show_error)]
+      command = [FFMPEG.ffprobe_binary, '-i', path, *ffprobe_options, *%w(-print_format json -show_format -show_streams -show_error)].compact
       std_output = ''
       std_error = ''
 
@@ -145,6 +145,14 @@ module FFMPEG
       end
     end
 
+    def audio_frames
+      metadata[:frames].select { |f| f[:media_type] == "audio" }
+    end
+
+    def video_frames
+      metadata[:frames].select { |f| f[:media_type] == "video" }
+    end
+
     def valid?
       not @invalid
     end
@@ -155,6 +163,18 @@ module FFMPEG
 
     def local?
       not remote?
+    end
+
+    def frames
+      metadata[:frames] || []
+    end
+
+    def packets_and_frames
+      metadata[:packets_and_frames] || []
+    end
+
+    def packets
+      metadata[:packets] || []
     end
 
     def width
