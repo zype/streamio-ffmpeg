@@ -44,6 +44,8 @@ require 'streamio-ffmpeg'
 
 ### Reading Metadata
 
+You can pass options to ffprobe through `FFMPEG::Movie`, so that the ffprobe command executed has the setting you want to. Example: `movie = FFMPEG::Movie.new("path/to/movie.mp4", { ffprobe_options: ["-read_intervals", "%+0.1", "-show_frames"] })`
+
 ``` ruby
 movie = FFMPEG::Movie.new("path/to/movie.mov")
 
@@ -69,6 +71,7 @@ movie.audio_streams[0] # "aac, 44100 Hz, stereo, s16, 75 kb/s" (raw audio stream
 
 movie.valid? # true (would be false if ffmpeg fails to read the movie)
 ```
+
 
 ### Transcoding
 
