@@ -8,6 +8,7 @@ module FFMPEG
     attr_reader :path, :duration, :time, :bitrate, :rotation, :creation_time
     attr_reader :video_stream, :video_codec, :video_bitrate, :colorspace, :width, :height, :sar, :dar, :frame_rate
     attr_reader :audio_streams, :audio_stream, :audio_codec, :audio_bitrate, :audio_sample_rate, :audio_channels, :audio_tags
+    attr_reader :subtitle_streams, :other_streams
     attr_reader :container
     attr_reader :metadata, :format_tags
 
@@ -53,8 +54,20 @@ module FFMPEG
         @duration = 0
 
       else
-        video_streams = @metadata[:streams].select { |stream| stream.key?(:codec_type) and stream[:codec_type] === 'video' }
-        audio_streams = @metadata[:streams].select { |stream| stream.key?(:codec_type) and stream[:codec_type] === 'audio' }
+        # get stream types
+        streams_by_type = @metadata[:streams].reduce({}) do |stream_by_type, stream|
+          stream_by_type[stream[:codec_type]] ||= []
+          stream_by_type[stream[:codec_type]] << stream
+          stream_by_type
+        end
+
+        # assign streams to its variables
+        video_streams    = streams_by_type.delete('video') || []
+        audio_streams    = streams_by_type.delete('audio') || []
+        @subtitle_streams = streams_by_type.delete('subtitle') || []
+
+        # let's keep unknown streams
+        @other_streams = streams_by_type
 
         @container = @metadata[:format][:format_name]
 
