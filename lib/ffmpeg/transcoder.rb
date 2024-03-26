@@ -24,7 +24,7 @@ module FFMPEG
       apply_transcoder_options
 
       @input = @transcoder_options[:input] unless @transcoder_options[:input].nil?
-      
+
       # additional_inputs = ["-i", "/file/path", "-i", "/file/path", ...]
       @additional_inputs = additional_inputs
 
@@ -95,7 +95,7 @@ module FFMPEG
           end
 
         @errors << "ffmpeg returned non-zero exit code" unless wait_thr.value.success?
-
+        binding.pry
         rescue Timeout::Error => e
           FFMPEG.logger.error "Process hung...\n@command\n#{command}\nOutput\n#{@output}\n"
           raise Error, "Process hung. Full output: #{@output}"
@@ -104,6 +104,7 @@ module FFMPEG
     end
 
     def validate_output_file(&block)
+      binding.pry
       @errors << "no output file created" unless File.exist?(@output_file)
       @errors << "encoded file is invalid" if encoded.nil? || !encoded.valid?
 
