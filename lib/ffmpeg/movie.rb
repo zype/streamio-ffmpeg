@@ -6,7 +6,7 @@ require 'net/http'
 module FFMPEG
   class Movie
     attr_reader :path, :duration, :time, :bitrate, :rotation, :creation_time
-    attr_reader :video_stream, :video_codec, :video_bitrate, :colorspace, :width, :height, :sar, :dar, :frame_rate
+    attr_reader :video_streams, :video_stream, :video_codec, :video_bitrate, :colorspace, :width, :height, :sar, :dar, :frame_rate
     attr_reader :audio_streams, :audio_stream, :audio_codec, :audio_bitrate, :audio_sample_rate, :audio_channels, :audio_tags
     attr_reader :container
     attr_reader :metadata, :format_tags
@@ -95,8 +95,14 @@ module FFMPEG
 
           @video_stream = "#{video_stream[:codec_name]} (#{video_stream[:profile]}) (#{video_stream[:codec_tag_string]} / #{video_stream[:codec_tag]}), #{colorspace}, #{resolution} [SAR #{sar} DAR #{dar}]"
 
-          @rotation = if video_stream.key?(:tags) and video_stream[:tags].key?(:rotate)
-                        video_stream[:tags][:rotate].to_i
+          # Take into account rotation included in side_data_list
+          side_data_list = video_stream[:side_data_list] || []
+          display_matrix_list = side_data_list.find { |list| list[:side_data_type] == "Display Matrix" } || {}
+          side_data_list_rotation = display_matrix_list[:rotation]
+          has_rotation = (video_stream.key?(:tags) && video_stream[:tags].key?(:rotate)) || side_data_list_rotation
+
+          @rotation = if has_rotation
+                        (video_stream[:tags][:rotate] || side_data_list_rotation).to_i
                       else
                         nil
                       end
@@ -233,7 +239,7 @@ module FFMPEG
     protected
 
     def rotated?
-      !(rotation.nil? || [180,0].include?(rotation))
+      !(rotation.nil? || [180,0].include?(rotation.abs))
     end
 
     def aspect_from_dar
