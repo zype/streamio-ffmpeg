@@ -53,7 +53,7 @@ module FFMPEG
         @duration = 0
 
       else
-        video_streams = @metadata[:streams].select { |stream| stream.key?(:codec_type) and stream[:codec_type] === 'video' }
+        @video_streams = @metadata[:streams].select { |stream| stream.key?(:codec_type) and stream[:codec_type] === 'video' }
         audio_streams = @metadata[:streams].select { |stream| stream.key?(:codec_type) and stream[:codec_type] === 'audio' }
 
         @container = @metadata[:format][:format_name]
@@ -152,11 +152,11 @@ module FFMPEG
     end
 
     def audio_frames
-      metadata[:frames].select { |f| f[:media_type] == "audio" }
+      metadata.fetch(:frames, []).select { |f| f[:media_type] == "audio" }
     end
 
     def video_frames
-      metadata[:frames].select { |f| f[:media_type] == "video" }
+      metadata.fetch(:frames, []).select { |f| f[:media_type] == "video" }
     end
 
     def valid?
