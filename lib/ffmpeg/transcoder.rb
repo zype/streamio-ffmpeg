@@ -16,15 +16,15 @@ module FFMPEG
         @input = input.path
       end
       @output_file = output_file
-
       @raw_options, @transcoder_options = optimize_screenshot_parameters(options, transcoder_options)
 
       @errors = []
 
       apply_transcoder_options
 
+
       @input = @transcoder_options[:input] unless @transcoder_options[:input].nil?
-      
+
       # additional_inputs = ["-i", "/file/path", "-i", "/file/path", ...]
       @additional_inputs = additional_inputs
 
@@ -95,7 +95,6 @@ module FFMPEG
           end
 
         @errors << "ffmpeg returned non-zero exit code" unless wait_thr.value.success?
-
         rescue Timeout::Error => e
           FFMPEG.logger.error "Process hung...\n@command\n#{command}\nOutput\n#{@output}\n"
           raise Error, "Process hung. Full output: #{@output}"
@@ -120,7 +119,6 @@ module FFMPEG
     def apply_transcoder_options
        # if true runs #validate_output_file
       @transcoder_options[:validate] = @transcoder_options.fetch(:validate) { true }
-
       return if @movie.nil? || @movie.calculated_aspect_ratio.nil?
       case @transcoder_options[:preserve_aspect_ratio].to_s
       when "width"
