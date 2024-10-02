@@ -13,6 +13,8 @@ workflows:
           gcp_region: us-central1
           gke_cluster_name: zype-working-2          
           context: k8s_working
+          collect_results: true
+          results_path: test_results
           test_app_name: tests
           requires:
             - zype-ci/persist_checkout
