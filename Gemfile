@@ -7,4 +7,5 @@ group :test do
   gem 'webrick'
   gem 'simplecov'
   gem 'pry'
+  gem 'rspec_junit_formatter'
 end

@@ -1,0 +1,8 @@
+services:
+  tests:
+    image: zype/streamio-ffmpeg-tests:${CIRCLE_SHA1:-latest}
+    build: .
+    environment:
+      - RAILS_ENV=test
+    command: |
+       sh -c "bundle exec rspec --format RspecJunitFormatter --out test_results/rspec.xml --format progress spec/"
