@@ -1,0 +1,22 @@
+version: 2.1
+
+orbs:
+  zype-ci: zype/zype-ci@2
+
+workflows:
+  version: 2
+  pipeline:
+    jobs:
+      - zype-ci/persist_checkout
+      - zype-ci/run_tests:
+          gcp_project: zype-working
+          gcp_region: us-central1
+          gke_cluster_name: zype-working-2          
+          context: k8s_working
+          test_app_name: tests
+          requires:
+            - zype-ci/persist_checkout
+      - zype-ci/sonar:
+          context: k8s_working
+          requires:
+            - zype-ci/run_tests

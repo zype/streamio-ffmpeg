@@ -1,0 +1,9 @@
+version: '3'
+services:
+  tests:
+    image: zype/streamio-ffmpeg-tests:${CIRCLE_SHA1:-latest}
+    build: .
+    environment:
+      - RAILS_ENV=test
+    command: |
+       sh -c "rspec spec -f progress"
